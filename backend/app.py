@@ -28,9 +28,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BASE_DIR = Path(__file__).parent.parent
-WIKI_DIR = BASE_DIR / "sources" / "wiki"
-RAW_DIR = BASE_DIR / "sources" / "raw"
+import os
+SOURCES_DIR = Path(os.environ.get("SOURCES_DIR", Path(__file__).parent.parent / "sources"))
+WIKI_DIR = SOURCES_DIR / "wiki"
+RAW_DIR = SOURCES_DIR / "raw"
 WIKI_DIR.mkdir(parents=True, exist_ok=True)
 RAW_DIR.mkdir(parents=True, exist_ok=True)
 
