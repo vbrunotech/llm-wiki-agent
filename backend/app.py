@@ -80,7 +80,11 @@ async def _sse(operation_fn, *args):
             if item.get("type") in ("done", "error"):
                 break
 
-    return StreamingResponse(generate(), media_type="text/event-stream")
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 
 # ── Graph endpoint ─────────────────────────────────────────────────────────────

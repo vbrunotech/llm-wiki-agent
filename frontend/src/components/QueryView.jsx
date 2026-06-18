@@ -22,8 +22,8 @@ function Message({ msg, onWikiLink }) {
         return (
           <button
             onClick={() => onWikiLink?.(slug)}
-            className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/50
-                       hover:decoration-blue-300 cursor-pointer transition-colors"
+            className="text-link hover:text-link-hover underline decoration-link/50
+                       hover:decoration-link-hover cursor-pointer transition-colors"
           >
             {children}
           </button>
@@ -38,13 +38,13 @@ function Message({ msg, onWikiLink }) {
   return (
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
       <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5
-                       ${isUser ? 'bg-blue-600' : 'bg-slate-700'}`}>
+                       ${isUser ? 'bg-blue-600' : 'bg-hover'}`}>
         {isUser ? <User size={14} /> : <Bot size={14} />}
       </div>
       <div className={`max-w-[75%] rounded-xl px-4 py-3 text-sm
                        ${isUser
                          ? 'bg-blue-600 text-white rounded-tr-none'
-                         : 'bg-slate-800 text-slate-200 rounded-tl-none'}`}>
+                         : 'bg-raised text-heading rounded-tl-none'}`}>
         {isUser
           ? <p>{msg.content}</p>
           : <div className="wiki-content">
@@ -59,14 +59,14 @@ function Message({ msg, onWikiLink }) {
 function TypingIndicator() {
   return (
     <div className="flex gap-3">
-      <div className="w-7 h-7 rounded-full bg-slate-700 flex items-center justify-center shrink-0">
+      <div className="w-7 h-7 rounded-full bg-hover flex items-center justify-center shrink-0">
         <Bot size={14} />
       </div>
-      <div className="bg-slate-800 rounded-xl rounded-tl-none px-4 py-3">
+      <div className="bg-raised rounded-xl rounded-tl-none px-4 py-3">
         <div className="flex gap-1 items-center h-4">
           {[0, 1, 2].map(i => (
             <div key={i}
-              className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"
+              className="w-1.5 h-1.5 bg-muted rounded-full animate-bounce"
               style={{ animationDelay: `${i * 0.15}s` }}
             />
           ))}
@@ -93,11 +93,11 @@ export default function QueryView({ messages, loading, input, onInputChange, onS
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center">
-            <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center mb-4">
+            <div className="w-16 h-16 bg-raised rounded-2xl flex items-center justify-center mb-4">
               <Bot size={28} className="text-blue-500" />
             </div>
-            <h2 className="text-lg font-semibold text-slate-200 mb-2">Ask your wiki</h2>
-            <p className="text-sm text-slate-500 max-w-sm">
+            <h2 className="text-lg font-semibold text-heading mb-2">Ask your wiki</h2>
+            <p className="text-sm text-muted max-w-sm">
               Ask anything — the agent will read the relevant wiki pages and synthesize an answer.
             </p>
           </div>
@@ -108,7 +108,7 @@ export default function QueryView({ messages, loading, input, onInputChange, onS
       </div>
 
       {/* Input */}
-      <div className="px-6 py-4 border-t border-slate-800">
+      <div className="px-6 py-4 border-t border-border">
         <div className="flex gap-3 items-end">
           <textarea
             value={input}
@@ -116,8 +116,8 @@ export default function QueryView({ messages, loading, input, onInputChange, onS
             onKeyDown={handleKey}
             placeholder="Ask the wiki anything… (Enter to send)"
             rows={1}
-            className="flex-1 bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 text-sm
-                       text-slate-100 placeholder-slate-500 resize-none focus:outline-none
+            className="flex-1 bg-raised border border-border-subtle rounded-xl px-4 py-3 text-sm
+                       text-heading placeholder-muted resize-none focus:outline-none
                        focus:border-blue-500 transition-colors"
             style={{ maxHeight: '120px', overflowY: 'auto' }}
           />

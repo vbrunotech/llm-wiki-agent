@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Settings, Network } from 'lucide-react'
+import { Settings, Network, Sun, Moon } from 'lucide-react'
+import { useTheme } from '../components/ThemeProvider'
 import Sidebar from '../components/Sidebar'
 import QueryView from '../components/QueryView'
 import PageViewer from '../components/PageViewer'
@@ -16,11 +17,12 @@ import { streamSSE } from '../utils/sse'
 function App() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { resolvedTheme, toggleTheme } = useTheme()
   // Data
   const [sources, setSources] = useState([])
   const [wikiPages, setWikiPages] = useState([])
 
-  // View: 'query' | 'page' | 'progress' | 'settings'
+  // View: 'query' | 'page' | 'progress' | 'settings' | 'graph'
   const [view, setView] = useState('query')
   const [currentPage, setCurrentPage] = useState(null) // { filename, content }
   const [pageHistory, setPageHistory] = useState([])   // stack of previous { filename, content }
@@ -193,16 +195,16 @@ function App() {
       />
 
       {/* Main panel */}
-      <main className="flex-1 flex flex-col min-w-0 bg-slate-950">
+      <main className="flex-1 flex flex-col min-w-0 bg-base">
         {/* Top bar */}
-        <div className="flex items-center gap-4 px-6 py-3 border-b border-slate-800 shrink-0">
+        <div className="flex items-center gap-4 px-6 py-3 border-b border-border shrink-0">
           <div className="flex gap-2 flex-1">
             <button
               onClick={() => setView('query')}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors
                           ${view === 'query'
-                            ? 'bg-slate-800 text-slate-100'
-                            : 'text-slate-500 hover:text-slate-300'}`}
+                            ? 'bg-raised text-heading'
+                            : 'text-muted hover:text-heading'}`}
             >
               Ask
             </button>
@@ -213,8 +215,8 @@ function App() {
               }}
               className={`px-3 py-1 rounded-md text-sm font-medium transition-colors
                           ${view === 'page'
-                            ? 'bg-slate-800 text-slate-100'
-                            : 'text-slate-500 hover:text-slate-300'}`}
+                            ? 'bg-raised text-heading'
+                            : 'text-muted hover:text-heading'}`}
             >
               Pages
             </button>
@@ -222,8 +224,8 @@ function App() {
               onClick={() => setView('graph')}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-sm font-medium transition-colors
                           ${view === 'graph'
-                            ? 'bg-slate-800 text-slate-100'
-                            : 'text-slate-500 hover:text-slate-300'}`}
+                            ? 'bg-raised text-heading'
+                            : 'text-muted hover:text-heading'}`}
             >
               <Network size={14} />
               Graph
@@ -233,19 +235,26 @@ function App() {
                 onClick={() => setView('progress')}
                 className={`px-3 py-1 rounded-md text-sm font-medium transition-colors
                             ${view === 'progress'
-                              ? 'bg-slate-800 text-slate-100'
-                              : 'text-slate-500 hover:text-slate-300'}`}
+                              ? 'bg-raised text-heading'
+                              : 'text-muted hover:text-heading'}`}
               >
                 {processing ? 'Running…' : 'Log'}
               </button>
             )}
           </div>
           <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-md text-muted hover:text-heading hover:bg-raised transition-colors"
+            title={resolvedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {resolvedTheme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+          <button
             onClick={() => setView(v => v === 'settings' ? 'query' : 'settings')}
             className={`p-1.5 rounded-md transition-colors
                         ${view === 'settings'
-                          ? 'bg-slate-800 text-slate-200'
-                          : 'text-slate-500 hover:text-slate-300'}`}
+                          ? 'bg-raised text-heading'
+                          : 'text-muted hover:text-heading'}`}
             title="Settings"
           >
             <Settings size={16} />

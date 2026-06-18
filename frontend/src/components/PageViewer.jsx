@@ -4,8 +4,6 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { ArrowLeft, FileText } from 'lucide-react'
 
-// [[slug]] → [slug](wiki://slug)
-// [[slug|display text]] → [display text](wiki://slug)
 function processWikiLinks(content) {
   return content.replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (_, slug, text) => {
     const label = (text || slug).trim()
@@ -23,8 +21,8 @@ export default function PageViewer({ filename, content, onBack, onWikiLink }) {
         return (
           <button
             onClick={() => onWikiLink?.(slug)}
-            className="text-blue-400 hover:text-blue-300 underline decoration-blue-400/50
-                       hover:decoration-blue-300 cursor-pointer transition-colors"
+            className="text-link hover:text-link-hover underline decoration-link/50
+                       hover:decoration-link-hover cursor-pointer transition-colors"
           >
             {children}
           </button>
@@ -41,18 +39,18 @@ export default function PageViewer({ filename, content, onBack, onWikiLink }) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 py-3 border-b border-slate-800 shrink-0">
+      <div className="flex items-center gap-3 px-6 py-3 border-b border-border shrink-0">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-200
+          className="flex items-center gap-1.5 text-sm text-muted hover:text-heading
                      transition-colors"
         >
           <ArrowLeft size={15} />
           Back
         </button>
-        <div className="h-4 w-px bg-slate-700" />
-        <FileText size={14} className="text-slate-500" />
-        <span className="text-sm font-mono text-slate-400">{filename}</span>
+        <div className="h-4 w-px bg-border-subtle" />
+        <FileText size={14} className="text-muted" />
+        <span className="text-sm font-mono text-muted">{filename}</span>
       </div>
 
       {/* Content */}

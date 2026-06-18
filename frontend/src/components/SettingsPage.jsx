@@ -62,14 +62,14 @@ function SecretField({ value, onChange, placeholder }) {
         value={value}
         onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-sm
-                   text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500
+        className="w-full bg-surface border border-border-subtle rounded-lg px-4 py-2.5 pr-10 text-sm
+                   text-heading placeholder-faint focus:outline-none focus:border-blue-500
                    transition-colors font-mono"
       />
       <button
         type="button"
         onClick={() => setVisible(v => !v)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-body"
       >
         {visible ? <EyeOff size={15} /> : <Eye size={15} />}
       </button>
@@ -84,8 +84,8 @@ function MultilineField({ value, onChange, placeholder }) {
       onChange={e => onChange(e.target.value)}
       placeholder={placeholder}
       rows={4}
-      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm
-                 text-slate-100 placeholder-slate-600 resize-none focus:outline-none
+      className="w-full bg-surface border border-border-subtle rounded-lg px-4 py-2.5 text-sm
+                 text-heading placeholder-faint resize-none focus:outline-none
                  focus:border-blue-500 transition-colors font-mono leading-relaxed"
     />
   )
@@ -142,7 +142,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <Loader2 size={24} className="animate-spin text-slate-500" />
+        <Loader2 size={24} className="animate-spin text-muted" />
       </div>
     )
   }
@@ -150,14 +150,14 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col h-full overflow-y-auto">
       <div className="max-w-2xl w-full mx-auto px-8 py-8">
-        <h1 className="text-xl font-bold text-slate-100 mb-1">Settings</h1>
-        <p className="text-sm text-slate-500 mb-8">
-          Configure your LLM provider. Settings are saved to <code className="bg-slate-800 px-1 rounded text-xs">backend/wiki_settings.json</code>.
+        <h1 className="text-xl font-bold text-heading mb-1">Settings</h1>
+        <p className="text-sm text-muted mb-8">
+          Configure your LLM provider. Settings are saved to <code className="bg-raised px-1 rounded text-xs">backend/wiki_settings.json</code>.
         </p>
 
         {/* Mode selector */}
         <section className="mb-8">
-          <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
+          <label className="block text-xs font-semibold text-muted uppercase tracking-wide mb-3">
             LLM Mode
           </label>
           <div className="grid grid-cols-1 gap-2">
@@ -167,7 +167,7 @@ export default function SettingsPage() {
                 className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors
                             ${selectedMode === mode.value
                               ? 'border-blue-500 bg-blue-500/10'
-                              : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'}`}
+                              : 'border-border-subtle hover:border-muted bg-raised/50'}`}
               >
                 <input
                   type="radio"
@@ -179,7 +179,7 @@ export default function SettingsPage() {
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-slate-200">{mode.label}</span>
+                    <span className="text-sm font-medium text-heading">{mode.label}</span>
                     {mode.supportsTools
                       ? <span className="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full">
                           Tool calling ✓
@@ -188,7 +188,7 @@ export default function SettingsPage() {
                           No tool calling
                         </span>}
                   </div>
-                  <p className="text-xs text-slate-500 mt-0.5 font-mono">{mode.value}</p>
+                  <p className="text-xs text-muted mt-0.5 font-mono">{mode.value}</p>
                 </div>
               </label>
             ))}
@@ -209,12 +209,12 @@ export default function SettingsPage() {
 
         {/* Mode-specific fields */}
         <section className="space-y-5 mb-8">
-          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">
+          <h2 className="text-xs font-semibold text-muted uppercase tracking-wide">
             {currentMode.label} Configuration
           </h2>
           {currentMode.fields.map(field => (
             <div key={field.key}>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              <label className="block text-sm font-medium text-body mb-1.5">
                 {field.label}
               </label>
               {field.multiline ? (
@@ -235,8 +235,8 @@ export default function SettingsPage() {
                   value={form[field.key] || ''}
                   onChange={e => set(field.key, e.target.value)}
                   placeholder={field.placeholder}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm
-                             text-slate-100 placeholder-slate-600 focus:outline-none focus:border-blue-500
+                  className="w-full bg-surface border border-border-subtle rounded-lg px-4 py-2.5 text-sm
+                             text-heading placeholder-faint focus:outline-none focus:border-blue-500
                              transition-colors"
                 />
               )}

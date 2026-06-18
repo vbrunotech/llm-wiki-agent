@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { Loader2, ZoomIn, ZoomOut, Maximize } from 'lucide-react'
+import { useTheme } from './ThemeProvider'
 import dynamic from 'next/dynamic'
 
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false })
@@ -21,6 +22,18 @@ export default function GraphView({ onViewPage }) {
   const [hoverNode, setHoverNode] = useState(null)
   const containerRef = useRef(null)
   const graphRef = useRef(null)
+  const { resolvedTheme } = useTheme()
+
+  const themeColors = useMemo(() => {
+    if (typeof document === 'undefined') return { bg: '#020617', label: '#e2e8f0', link: '148, 163, 184' }
+    const s = getComputedStyle(document.documentElement)
+    const get = name => s.getPropertyValue(name).trim()
+    return {
+      bg: `rgb(${get('--color-graph-bg')})`,
+      label: `rgb(${get('--color-graph-label')})`,
+      link: get('--color-graph-link'),
+    }
+  }, [resolvedTheme])
 
   useEffect(() => {
     fetch('/api/graph')
@@ -69,10 +82,10 @@ export default function GraphView({ onViewPage }) {
       ctx.font = `${fontSize}px sans-serif`
       ctx.textAlign = 'center'
       ctx.textBaseline = 'top'
-      ctx.fillStyle = isHighlighted ? '#e2e8f0' : '#e2e8f022'
+      ctx.fillStyle = isHighlighted ? themeColors.label : themeColors.label + '22'
       ctx.fillText(node.label, node.x, node.y + radius + 2)
     }
-  }, [hoverNode, highlightNodes])
+  }, [hoverNode, highlightNodes, themeColors])
 
   const nodePointerAreaPaint = useCallback((node, color, ctx) => {
     const radius = 4 + Math.sqrt(node.linkCount || 1) * 2
@@ -130,26 +143,27 @@ export default function GraphView({ onViewPage }) {
   }, [])
 
   const linkColor = useCallback((link) => {
-    if (!hoverNode) return 'rgba(148, 163, 184, 0.15)'
+    const rgb = themeColors.link
+    if (!hoverNode) return `rgba(${rgb}, 0.15)`
     const src = typeof link.source === 'object' ? link.source.id : link.source
     const tgt = typeof link.target === 'object' ? link.target.id : link.target
-    if (src === hoverNode.id || tgt === hoverNode.id) return 'rgba(148, 163, 184, 0.6)'
-    return 'rgba(148, 163, 184, 0.05)'
-  }, [hoverNode])
+    if (src === hoverNode.id || tgt === hoverNode.id) return `rgba(${rgb}, 0.6)`
+    return `rgba(${rgb}, 0.05)`
+  }, [hoverNode, themeColors])
 
   const ready = !loading && graphData && graphData.nodes.length > 0 && dimensions
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden" style={{ background: '#020617' }}>
+    <div ref={containerRef} className="absolute inset-0 overflow-hidden" style={{ background: themeColors.bg }}>
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center text-slate-400">
+        <div className="absolute inset-0 flex items-center justify-center text-muted">
           <Loader2 className="animate-spin mr-2" size={20} />
           Loading graph...
         </div>
       )}
 
       {!loading && (!graphData || graphData.nodes.length === 0) && (
-        <div className="absolute inset-0 flex items-center justify-center text-slate-500">
+        <div className="absolute inset-0 flex items-center justify-center text-muted">
           No wiki pages yet. Ingest some documents to see the graph.
         </div>
       )}
@@ -161,7 +175,7 @@ export default function GraphView({ onViewPage }) {
             graphData={graphData}
             width={dimensions.width}
             height={dimensions.height}
-            backgroundColor="#020617"
+            backgroundColor={themeColors.bg}
             nodeCanvasObject={nodeCanvasObject}
             nodePointerAreaPaint={nodePointerAreaPaint}
             onNodeClick={handleNodeClick}
@@ -182,21 +196,21 @@ export default function GraphView({ onViewPage }) {
           <div className="absolute top-4 right-4 flex flex-col gap-1">
             <button
               onClick={handleZoomIn}
-              className="p-1.5 rounded-md bg-slate-800/80 backdrop-blur text-slate-400 hover:text-slate-200 hover:bg-slate-700/80 transition-colors"
+              className="p-1.5 rounded-md bg-raised/80 backdrop-blur text-muted hover:text-heading hover:bg-hover/80 transition-colors"
               title="Zoom in"
             >
               <ZoomIn size={16} />
             </button>
             <button
               onClick={handleZoomOut}
-              className="p-1.5 rounded-md bg-slate-800/80 backdrop-blur text-slate-400 hover:text-slate-200 hover:bg-slate-700/80 transition-colors"
+              className="p-1.5 rounded-md bg-raised/80 backdrop-blur text-muted hover:text-heading hover:bg-hover/80 transition-colors"
               title="Zoom out"
             >
               <ZoomOut size={16} />
             </button>
             <button
               onClick={handleZoomFit}
-              className="p-1.5 rounded-md bg-slate-800/80 backdrop-blur text-slate-400 hover:text-slate-200 hover:bg-slate-700/80 transition-colors"
+              className="p-1.5 rounded-md bg-raised/80 backdrop-blur text-muted hover:text-heading hover:bg-hover/80 transition-colors"
               title="Fit to view"
             >
               <Maximize size={16} />
@@ -204,11 +218,11 @@ export default function GraphView({ onViewPage }) {
           </div>
 
           {/* Legend */}
-          <div className="absolute bottom-4 left-4 bg-slate-900/80 backdrop-blur rounded-lg px-3 py-2 text-xs space-y-1">
+          <div className="absolute bottom-4 left-4 bg-surface/80 backdrop-blur rounded-lg px-3 py-2 text-xs space-y-1">
             {Object.entries(GROUP_COLORS).map(([group, color]) => (
               <div key={group} className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: color }} />
-                <span className="text-slate-400 capitalize">{group}</span>
+                <span className="text-muted capitalize">{group}</span>
               </div>
             ))}
           </div>

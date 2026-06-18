@@ -28,7 +28,7 @@ const EXT_COLORS = {
 }
 
 function ExtBadge({ ext }) {
-  const cls = EXT_COLORS[ext] ?? 'text-slate-400 border-slate-700'
+  const cls = EXT_COLORS[ext] ?? 'text-muted border-border-subtle'
   return (
     <span className={`shrink-0 text-[10px] font-mono px-1 rounded border ${cls}`}>
       {ext.slice(1)}
@@ -38,16 +38,16 @@ function ExtBadge({ ext }) {
 
 function SourceItem({ source, onIngest, ingesting }) {
   return (
-    <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-slate-800 group">
-      <FileText size={13} className="text-slate-500 shrink-0" />
-      <span className="text-sm text-slate-300 truncate flex-1 min-w-0" title={source.filename}>
+    <div className="flex items-center gap-2 px-2 py-1.5 rounded-md hover:bg-raised group">
+      <FileText size={13} className="text-muted shrink-0" />
+      <span className="text-sm text-body truncate flex-1 min-w-0" title={source.filename}>
         {source.title}
       </span>
       <ExtBadge ext={source.ext ?? '.md'} />
       <button
         onClick={() => onIngest(source.filename)}
         disabled={ingesting === source.filename}
-        className="shrink-0 text-xs px-2 py-0.5 rounded border border-slate-700 text-slate-400
+        className="shrink-0 text-xs px-2 py-0.5 rounded border border-border-subtle text-muted
                    hover:border-blue-500 hover:text-blue-400 disabled:opacity-40 disabled:cursor-not-allowed
                    transition-colors opacity-0 group-hover:opacity-100"
       >
@@ -77,23 +77,23 @@ function WikiTree({ pages, onViewPage }) {
           {group !== '_root' && (
             <button
               onClick={() => setOpen(o => ({ ...o, [group]: !o[group] }))}
-              className="flex items-center gap-1.5 w-full px-2 py-1 rounded-md hover:bg-slate-800
-                         text-xs font-semibold text-slate-400 uppercase tracking-wide"
+              className="flex items-center gap-1.5 w-full px-2 py-1 rounded-md hover:bg-raised
+                         text-xs font-semibold text-muted uppercase tracking-wide"
             >
               {open[group] ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
               <FolderOpen size={12} />
               {group}
-              <span className="ml-auto text-slate-600">{items.length}</span>
+              <span className="ml-auto text-faint">{items.length}</span>
             </button>
           )}
           {(group === '_root' || open[group]) && items.map(p => (
             <button
               key={p.filename}
               onClick={() => onViewPage(p.filename)}
-              className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-slate-800
-                         text-sm text-slate-300 hover:text-slate-100 text-left"
+              className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md hover:bg-raised
+                         text-sm text-body hover:text-heading text-left"
             >
-              <FileText size={13} className="text-slate-600 shrink-0" />
+              <FileText size={13} className="text-faint shrink-0" />
               <span className="truncate">{group !== '_root' ? p.filename.split('/').pop() : p.filename}</span>
             </button>
           ))}
@@ -115,28 +115,25 @@ export default function Sidebar({
   // ── Collapsed state ──────────────────────────────────────────────────────────
   if (collapsed) {
     return (
-      <aside className="w-12 shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col items-center
+      <aside className="w-12 shrink-0 bg-surface border-r border-border flex flex-col items-center
                         py-3 gap-3 transition-all">
-        {/* Expand button */}
         <button
           onClick={() => setCollapsed(false)}
-          className="p-1.5 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800
+          className="p-1.5 rounded-md text-muted hover:text-heading hover:bg-raised
                      transition-colors"
           title="Expand sidebar"
         >
           <PanelLeftOpen size={16} />
         </button>
 
-        <div className="w-6 h-px bg-slate-800" />
+        <div className="w-6 h-px bg-border" />
 
-        {/* Logo icon */}
         <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
           <BookOpen size={14} className="text-white" />
         </div>
 
-        <div className="w-6 h-px bg-slate-800" />
+        <div className="w-6 h-px bg-border" />
 
-        {/* Action icons */}
         <button
           onClick={onOpenIngestModal}
           disabled={processing}
@@ -149,7 +146,7 @@ export default function Sidebar({
         <button
           onClick={onOpenUpload}
           title="Upload file"
-          className="p-1.5 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800
+          className="p-1.5 rounded-md text-muted hover:text-heading hover:bg-raised
                      transition-colors"
         >
           <Upload size={14} />
@@ -158,7 +155,7 @@ export default function Sidebar({
           onClick={onLint}
           disabled={processing}
           title="Lint wiki"
-          className="p-1.5 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800
+          className="p-1.5 rounded-md text-muted hover:text-heading hover:bg-raised
                      disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {processing
@@ -171,20 +168,20 @@ export default function Sidebar({
 
   // ── Expanded state ───────────────────────────────────────────────────────────
   return (
-    <aside className="w-72 shrink-0 bg-slate-900 border-r border-slate-800 flex flex-col overflow-hidden
+    <aside className="w-72 shrink-0 bg-surface border-r border-border flex flex-col overflow-hidden
                       transition-all">
       {/* Logo + collapse button */}
-      <div className="px-4 py-4 border-b border-slate-800 flex items-center gap-2.5">
+      <div className="px-4 py-4 border-b border-border flex items-center gap-2.5">
         <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center shrink-0">
           <BookOpen size={14} className="text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-sm font-bold text-slate-100">LLM Wiki</div>
-          <div className="text-xs text-slate-500">Personal knowledge base</div>
+          <div className="text-sm font-bold text-heading">LLM Wiki</div>
+          <div className="text-xs text-muted">Personal knowledge base</div>
         </div>
         <button
           onClick={() => setCollapsed(true)}
-          className="p-1 rounded-md text-slate-500 hover:text-slate-300 hover:bg-slate-800
+          className="p-1 rounded-md text-muted hover:text-heading hover:bg-raised
                      transition-colors shrink-0"
           title="Collapse sidebar"
         >
@@ -193,7 +190,7 @@ export default function Sidebar({
       </div>
 
       {/* Actions */}
-      <div className="px-3 py-3 border-b border-slate-800 flex gap-2">
+      <div className="px-3 py-3 border-b border-border flex gap-2">
         <button
           onClick={onOpenIngestModal}
           disabled={processing}
@@ -207,7 +204,7 @@ export default function Sidebar({
           onClick={onLint}
           disabled={processing}
           className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md
-                     border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-slate-200
+                     border border-border-subtle hover:border-muted text-muted hover:text-heading
                      text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {processing ? <Loader2 size={13} className="animate-spin" /> : <CheckCircle size={13} />}
@@ -220,14 +217,14 @@ export default function Sidebar({
         {/* Raw Sources */}
         <section>
           <div className="flex items-center gap-1.5 w-full px-2 py-1 text-xs font-semibold
-                          text-slate-400 uppercase tracking-wide">
+                          text-muted uppercase tracking-wide">
             <button
               onClick={() => setSourcesOpen(o => !o)}
-              className="flex items-center gap-1.5 flex-1 hover:text-slate-200 text-left"
+              className="flex items-center gap-1.5 flex-1 hover:text-heading text-left"
             >
               {sourcesOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
               Raw Sources
-              <span className="ml-auto text-slate-600">{sources.length}</span>
+              <span className="ml-auto text-faint">{sources.length}</span>
             </button>
             <button
               onClick={onOpenUpload}
@@ -240,7 +237,7 @@ export default function Sidebar({
           {sourcesOpen && (
             <div className="mt-1 space-y-0.5">
               {sources.length === 0
-                ? <p className="px-2 py-2 text-xs text-slate-600 italic">No files in sources/raw/</p>
+                ? <p className="px-2 py-2 text-xs text-faint italic">No files in sources/raw/</p>
                 : sources.map(s => (
                     <SourceItem
                       key={s.filename}
@@ -258,16 +255,16 @@ export default function Sidebar({
           <button
             onClick={() => setWikiOpen(o => !o)}
             className="flex items-center gap-1.5 w-full px-2 py-1 text-xs font-semibold
-                       text-slate-400 uppercase tracking-wide hover:text-slate-200"
+                       text-muted uppercase tracking-wide hover:text-heading"
           >
             {wikiOpen ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
             Wiki Pages
-            <span className="ml-auto text-slate-600">{wikiPages.length}</span>
+            <span className="ml-auto text-faint">{wikiPages.length}</span>
           </button>
           {wikiOpen && (
             <div className="mt-1">
               {wikiPages.length === 0
-                ? <p className="px-2 py-2 text-xs text-slate-600 italic">No pages yet — ingest a source.</p>
+                ? <p className="px-2 py-2 text-xs text-faint italic">No pages yet — ingest a source.</p>
                 : <WikiTree pages={wikiPages} onViewPage={onViewPage} />}
             </div>
           )}

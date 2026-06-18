@@ -2,32 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Theme tokens ─────────────────────────────────────────── */
+:root {
+  --color-base:          249 250 251;
+  --color-surface:       255 255 255;
+  --color-raised:        241 245 249;
+  --color-hover:         226 232 240;
+  --color-overlay:       0 0 0;
+
+  --color-heading:       15 23 42;
+  --color-body:          51 65 85;
+  --color-muted:         100 116 139;
+  --color-faint:         148 163 184;
+
+  --color-border:        226 232 240;
+  --color-border-subtle: 209 213 219;
+
+  --color-link:          37 99 235;
+  --color-link-hover:    59 130 246;
+
+  --color-scrollbar:     203 213 225;
+  --color-scrollbar-hover: 148 163 184;
+
+  --color-graph-bg:      249 250 251;
+  --color-graph-label:   15 23 42;
+  --color-graph-link:    148 163 184;
+}
+
+.dark {
+  --color-base:          2 6 23;
+  --color-surface:       15 23 42;
+  --color-raised:        30 41 59;
+  --color-hover:         51 65 85;
+  --color-overlay:       0 0 0;
+
+  --color-heading:       241 245 249;
+  --color-body:          203 213 225;
+  --color-muted:         148 163 184;
+  --color-faint:         100 116 139;
+
+  --color-border:        30 41 59;
+  --color-border-subtle: 51 65 85;
+
+  --color-link:          96 165 250;
+  --color-link-hover:    147 197 253;
+
+  --color-scrollbar:     51 65 85;
+  --color-scrollbar-hover: 100 116 139;
+
+  --color-graph-bg:      2 6 23;
+  --color-graph-label:   226 232 240;
+  --color-graph-link:    148 163 184;
+}
+
 @layer base {
   html, body { @apply h-full; }
-  body { @apply bg-slate-950 text-slate-100 antialiased; }
+  body {
+    @apply bg-base text-body antialiased;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { @apply bg-transparent; }
-::-webkit-scrollbar-thumb { @apply bg-slate-700 rounded-full; }
-::-webkit-scrollbar-thumb:hover { @apply bg-slate-600; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background-color: rgb(var(--color-scrollbar));
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(var(--color-scrollbar-hover));
+}
 
 /* Markdown content */
-.wiki-content h1 { @apply text-2xl font-bold text-slate-100 mb-4; }
-.wiki-content h2 { @apply text-xl font-semibold text-slate-100 mt-6 mb-3 pb-2 border-b border-slate-700; }
-.wiki-content h3 { @apply text-lg font-semibold text-slate-200 mt-4 mb-2; }
-.wiki-content p { @apply text-slate-300 leading-relaxed mb-3; }
-.wiki-content ul, .wiki-content ol { @apply text-slate-300 pl-6 mb-3 space-y-1; }
+.wiki-content h1 { @apply text-2xl font-bold text-heading mb-4; }
+.wiki-content h2 { @apply text-xl font-semibold text-heading mt-6 mb-3 pb-2 border-b border-border-subtle; }
+.wiki-content h3 { @apply text-lg font-semibold text-heading mt-4 mb-2; }
+.wiki-content p { @apply text-body leading-relaxed mb-3; }
+.wiki-content ul, .wiki-content ol { @apply text-body pl-6 mb-3 space-y-1; }
 .wiki-content ul { @apply list-disc; }
 .wiki-content ol { @apply list-decimal; }
-.wiki-content a { @apply text-blue-400 hover:text-blue-300 underline; }
-.wiki-content code { @apply bg-slate-800 text-blue-300 px-1.5 py-0.5 rounded text-sm font-mono; }
-.wiki-content pre { @apply bg-slate-900 rounded-lg p-4 overflow-x-auto mb-4; }
-.wiki-content pre code { @apply bg-transparent p-0 text-slate-300; }
-.wiki-content blockquote { @apply border-l-4 border-blue-500 pl-4 py-1 my-3 text-slate-400 italic; }
+.wiki-content a { @apply text-link hover:text-link-hover underline; }
+.wiki-content code { @apply bg-raised text-link px-1.5 py-0.5 rounded text-sm font-mono; }
+.wiki-content pre { @apply bg-surface rounded-lg p-4 overflow-x-auto mb-4; }
+.wiki-content pre code { @apply bg-transparent p-0 text-body; }
+.wiki-content blockquote { @apply border-l-4 border-blue-500 pl-4 py-1 my-3 text-muted italic; }
 .wiki-content table { @apply w-full border-collapse mb-4; }
-.wiki-content th { @apply bg-slate-800 text-slate-200 font-semibold px-4 py-2 text-left border border-slate-700; }
-.wiki-content td { @apply px-4 py-2 border border-slate-700 text-slate-300; }
-.wiki-content hr { @apply border-slate-700 my-6; }
-.wiki-content strong { @apply text-slate-200 font-semibold; }
+.wiki-content th { @apply bg-raised text-heading font-semibold px-4 py-2 text-left border border-border; }
+.wiki-content td { @apply px-4 py-2 border border-border text-body; }
+.wiki-content hr { @apply border-border-subtle my-6; }
+.wiki-content strong { @apply text-heading font-semibold; }
