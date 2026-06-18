@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any, Dict
 
@@ -80,6 +81,51 @@ async def _sse(operation_fn, *args):
                 break
 
     return StreamingResponse(generate(), media_type="text/event-stream")
+
+
+# ── Graph endpoint ─────────────────────────────────────────────────────────────
+
+WIKILINK_RE = re.compile(r'\[\[([^\]|]+)(?:\|[^\]]+)?\]\]')
+
+
+def build_graph_data():
+    nodes = {}
+    links = []
+
+    # First pass: register all file-backed nodes
+    pages = {}
+    for path in sorted(WIKI_DIR.rglob("*.md")):
+        rel = str(path.relative_to(WIKI_DIR))
+        slug = path.stem
+        parts = rel.split("/")
+        group = parts[0] if len(parts) > 1 else "root"
+        content = path.read_text(encoding="utf-8")
+        lines = content.splitlines()
+        title = next((l.lstrip("#").strip() for l in lines if l.startswith("#")), slug)
+        nodes[slug] = {"id": slug, "label": title, "group": group, "filename": rel, "linkCount": 0}
+        pages[slug] = content
+
+    # Second pass: parse links and create orphan nodes
+    for slug, content in pages.items():
+        targets = set(WIKILINK_RE.findall(content))
+        for target in targets:
+            target = target.strip()
+            if not target or target == slug:
+                continue
+            if target not in nodes:
+                nodes[target] = {"id": target, "label": target, "group": "orphan", "filename": None, "linkCount": 0}
+            links.append({"source": slug, "target": target})
+
+    for link in links:
+        nodes[link["source"]]["linkCount"] += 1
+        nodes[link["target"]]["linkCount"] += 1
+
+    return {"nodes": list(nodes.values()), "links": links}
+
+
+@app.get("/api/graph")
+async def graph():
+    return build_graph_data()
 
 
 # ── Wiki endpoints ─────────────────────────────────────────────────────────────

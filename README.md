@@ -10,6 +10,7 @@ The project implements the [LLM Wiki pattern](llm-wiki.md): the wiki becomes a c
 - Query the wiki with streamed progress as the LLM reads and writes pages.
 - Maintain `index.md` and `log.md` as navigation and audit files.
 - Run a wiki lint pass to find orphan pages, missing links, stale index entries, and contradictions.
+- Explore an interactive graph view of wiki pages and their connections, similar to Obsidian's graph view.
 - Configure LLM providers from the UI or environment variables.
 - Upload many common file types using MarkItDown extraction.
 - Use the generated wiki directly in markdown tools such as Obsidian.
@@ -148,7 +149,8 @@ After a production build, the FastAPI backend serves the built frontend from `/`
 4. Run ingest to let the LLM update the wiki.
 5. Ask questions from the Ask view.
 6. Browse generated pages from the sidebar.
-7. Run lint occasionally to clean up links, index entries, and conflicts.
+7. Click the Graph tab to visualize page connections as an interactive force-directed graph.
+8. Run lint occasionally to clean up links, index entries, and conflicts.
 
 Uploaded source files are stored under `sources/raw/`. Generated wiki pages are stored under `sources/wiki/`.
 
@@ -191,6 +193,7 @@ Common wiki categories:
 | `POST` | `/api/lint` | Audit and repair the wiki via SSE |
 | `GET` | `/api/pages` | List wiki pages |
 | `GET` | `/api/page?filename=` | Read a wiki page |
+| `GET` | `/api/graph` | Get wiki graph (nodes + links from wikilinks) |
 | `GET` | `/api/sources` | List uploaded source files |
 | `POST` | `/api/upload` | Upload a source file |
 | `GET` | `/api/settings` | Read current settings |
@@ -202,6 +205,7 @@ Common wiki categories:
 - `backend/wiki_system.py` defines ingest, query, and lint prompts.
 - `backend/wiki_tools.py` exposes page read/write/list/search tools to the LLM.
 - `backend/ai_generator.py` contains provider-specific agent loops.
+- `frontend/src/components/GraphView.jsx` renders the interactive wiki graph using `react-force-graph-2d`.
 - `frontend/src/app/page.jsx` owns the main UI state and view switching.
 - `frontend/src/utils/sse.js` consumes streaming operation events.
 

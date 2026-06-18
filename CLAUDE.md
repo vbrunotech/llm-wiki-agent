@@ -75,16 +75,18 @@ Wiki operations (ingest, query, lint) require tool calling. The UI warns if the 
 | GET | `/api/page?filename=` | Read a wiki page |
 | GET | `/api/sources` | List raw source files |
 | POST | `/api/upload` | Upload a `.md` file to `sources/raw/` |
+| GET | `/api/graph` | Get wiki graph (nodes + links from wikilinks) |
 | GET | `/api/settings` | Get current config |
 | POST | `/api/settings` | Save settings to `wiki_settings.json` |
 
 ## Frontend components
 
-- `app/page.jsx` — Root; owns all state; four views: `query` (Ask), `page` (Pages), `progress`, `settings`
+- `app/page.jsx` — Root; owns all state; five views: `query` (Ask), `page` (Pages), `graph` (Graph), `progress`, `settings`
 - `Sidebar` — Source list (upload/ingest per file) + wiki page list + lint button
 - `QueryView` — Chat interface for wiki questions (Ask tab); renders `[[wikilinks]]` as clickable links
 - `PageViewer` — Markdown renderer for wiki pages; supports wiki link navigation with back history
 - `ProgressPanel` — Live SSE log during ingest/lint
+- `GraphView` — Obsidian-style force-directed graph of wiki pages and `[[wikilink]]` connections; uses `react-force-graph-2d`; nodes colored by type (topics, sources, answers, root, orphan); click to navigate; zoom/fit controls
 - `SettingsPage` — LLM provider config UI
 - `IngestModal` — Paste text to ingest
 - `UploadModal` — Upload files to raw sources

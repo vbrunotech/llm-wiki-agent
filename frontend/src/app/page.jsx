@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Settings } from 'lucide-react'
+import { Settings, Network } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import QueryView from '../components/QueryView'
 import PageViewer from '../components/PageViewer'
 import ProgressPanel from '../components/ProgressPanel'
 import SettingsPage from '../components/SettingsPage'
+import GraphView from '../components/GraphView'
 import IngestModal from '../components/IngestModal'
 import UploadModal from '../components/UploadModal'
 import { streamSSE } from '../utils/sse'
@@ -217,6 +218,16 @@ function App() {
             >
               Pages
             </button>
+            <button
+              onClick={() => setView('graph')}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-sm font-medium transition-colors
+                          ${view === 'graph'
+                            ? 'bg-slate-800 text-slate-100'
+                            : 'text-slate-500 hover:text-slate-300'}`}
+            >
+              <Network size={14} />
+              Graph
+            </button>
             {progressLog.length > 0 && (
               <button
                 onClick={() => setView('progress')}
@@ -242,7 +253,7 @@ function App() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden relative">
           {view === 'query' && (
             <QueryView
               messages={messages}
@@ -267,6 +278,9 @@ function App() {
               log={progressLog}
               active={processing}
             />
+          )}
+          {view === 'graph' && (
+            <GraphView onViewPage={(filename) => handleViewPage(filename)} />
           )}
           {view === 'settings' && <SettingsPage />}
         </div>
