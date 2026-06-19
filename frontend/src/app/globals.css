@@ -51,8 +51,8 @@
   --color-scrollbar-hover: 100 116 139;
 
   --color-graph-bg:      2 6 23;
-  --color-graph-label:   226 232 240;
-  --color-graph-link:    148 163 184;
+  --color-graph-label:   241 245 249;
+  --color-graph-link:    203 213 225;
 }
 
 @layer base {

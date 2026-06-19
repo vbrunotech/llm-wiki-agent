@@ -8,11 +8,8 @@ import dynamic from 'next/dynamic'
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), { ssr: false })
 
 const GROUP_COLORS = {
-  topics: '#3b82f6',
-  sources: '#a855f7',
-  root: '#f59e0b',
-  answers: '#10b981',
-  orphan: '#64748b',
+  light: { topics: '#2563eb', sources: '#9333ea', root: '#d97706', answers: '#059669', orphan: '#64748b' },
+  dark:  { topics: '#60a5fa', sources: '#c084fc', root: '#fbbf24', answers: '#34d399', orphan: '#94a3b8' },
 }
 
 export default function GraphView({ onViewPage }) {
@@ -23,11 +20,12 @@ export default function GraphView({ onViewPage }) {
   const containerRef = useRef(null)
   const graphRef = useRef(null)
   const { resolvedTheme } = useTheme()
+  const palette = resolvedTheme === 'dark' ? GROUP_COLORS.dark : GROUP_COLORS.light
 
   const themeColors = useMemo(() => {
     if (typeof document === 'undefined') return { bg: '#020617', label: '#e2e8f0', link: '148, 163, 184' }
     const s = getComputedStyle(document.documentElement)
-    const get = name => s.getPropertyValue(name).trim()
+    const get = name => s.getPropertyValue(name).trim().replace(/ /g, ', ')
     return {
       bg: `rgb(${get('--color-graph-bg')})`,
       label: `rgb(${get('--color-graph-label')})`,
@@ -69,7 +67,7 @@ export default function GraphView({ onViewPage }) {
 
   const nodeCanvasObject = useCallback((node, ctx, globalScale) => {
     const radius = 4 + Math.sqrt(node.linkCount || 1) * 2
-    const color = GROUP_COLORS[node.group] || GROUP_COLORS.orphan
+    const color = palette[node.group] || palette.orphan
     const isHighlighted = !hoverNode || highlightNodes.has(node.id)
 
     ctx.beginPath()
@@ -85,7 +83,7 @@ export default function GraphView({ onViewPage }) {
       ctx.fillStyle = isHighlighted ? themeColors.label : themeColors.label + '22'
       ctx.fillText(node.label, node.x, node.y + radius + 2)
     }
-  }, [hoverNode, highlightNodes, themeColors])
+  }, [hoverNode, highlightNodes, themeColors, palette])
 
   const nodePointerAreaPaint = useCallback((node, color, ctx) => {
     const radius = 4 + Math.sqrt(node.linkCount || 1) * 2
@@ -142,14 +140,16 @@ export default function GraphView({ onViewPage }) {
     node.fy = node.y
   }, [])
 
+  const isDark = resolvedTheme === 'dark'
+
   const linkColor = useCallback((link) => {
     const rgb = themeColors.link
-    if (!hoverNode) return `rgba(${rgb}, 0.15)`
+    if (!hoverNode) return `rgba(${rgb}, ${isDark ? 0.35 : 0.2})`
     const src = typeof link.source === 'object' ? link.source.id : link.source
     const tgt = typeof link.target === 'object' ? link.target.id : link.target
-    if (src === hoverNode.id || tgt === hoverNode.id) return `rgba(${rgb}, 0.6)`
-    return `rgba(${rgb}, 0.05)`
-  }, [hoverNode, themeColors])
+    if (src === hoverNode.id || tgt === hoverNode.id) return `rgba(${rgb}, ${isDark ? 0.85 : 0.6})`
+    return `rgba(${rgb}, ${isDark ? 0.08 : 0.05})`
+  }, [hoverNode, themeColors, isDark])
 
   const ready = !loading && graphData && graphData.nodes.length > 0 && dimensions
 
@@ -219,7 +219,7 @@ export default function GraphView({ onViewPage }) {
 
           {/* Legend */}
           <div className="absolute bottom-4 left-4 bg-surface/80 backdrop-blur rounded-lg px-3 py-2 text-xs space-y-1">
-            {Object.entries(GROUP_COLORS).map(([group, color]) => (
+            {Object.entries(palette).map(([group, color]) => (
               <div key={group} className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: color }} />
                 <span className="text-muted capitalize">{group}</span>
